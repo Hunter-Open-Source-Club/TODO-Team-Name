@@ -20,28 +20,14 @@ import logging
 import sys
 
 from crawler import __version__
+from crawl_pdf import PdfCrawler
+from pathlib import Path
 
 __author__ = "Blake Vente"
 __copyright__ = "Blake Vente"
 __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
-
-
-def fib(n):
-    """Fibonacci example function
-
-    Args:
-      n (int): integer
-
-    Returns:
-      int: n-th Fibonacci number
-    """
-    assert n > 0
-    a, b = 1, 1
-    for i in range(n - 1):
-        a, b = b, a + b
-    return a
 
 
 def parse_args(args):
@@ -59,7 +45,6 @@ def parse_args(args):
         action="version",
         version="crawler {ver}".format(ver=__version__),
     )
-    parser.add_argument(dest="n", help="n-th Fibonacci number", type=int, metavar="INT")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -75,6 +60,12 @@ def parse_args(args):
         help="set loglevel to DEBUG",
         action="store_const",
         const=logging.DEBUG,
+    )
+    parser.add_argument(
+        dest="in_file",
+        help="provide pdf file to convert",
+        type=Path,
+        metavar="STRING",
     )
     return parser.parse_args(args)
 
@@ -100,7 +91,10 @@ def main(args):
     args = parse_args(args)
     setup_logging(args.loglevel)
     _logger.debug("Starting crazy calculations...")
-    print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
+    print(
+        "The input file has contents "
+        + "".join(PdfCrawler().pdf_to_pages(args.in_file))
+    )
     _logger.info("Script ends here")
 
 

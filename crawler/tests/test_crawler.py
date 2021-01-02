@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 from crawler.crawl_pdf import PdfCrawler, DirCrawler
 from pathlib import Path
 
@@ -7,7 +8,7 @@ __author__ = "Blake Vente"
 __copyright__ = "Blake Vente"
 __license__ = "mit"
 
-PDF_ROOT_DIR = Path("./_test_fixtures")
+PDF_ROOT_DIR = Path("./_fixtures")
 CS_127 = PDF_ROOT_DIR / "CS_127"
 
 
@@ -19,16 +20,16 @@ def test_pdf_crawler():
 
 def test_dir_crawler():
     crawler = DirCrawler()
-    c_dir = crawler.dir_to_pdf_contents(CS_127)
-    assert "CS_127" in c_dir
-    pdf_contents = c_dir["CS_127"]
+    pdf_contents = crawler.dir_to_pdf_contents(CS_127)
+    index = crawler.dir_to_index(PDF_ROOT_DIR)
+    assert pdf_contents is not None
     assert len(pdf_contents) > 0
     assert "Python" in pdf_contents[0]
-    index = crawler.dir_to_index(PDF_ROOT_DIR)
-    print(index)
-    assert len(index) > len(list(PDF_ROOT_DIR.iterdir()))
     assert index is not None
-    index.to_json("index.json")
+    assert sum(map(len, index.values())) > len(list(PDF_ROOT_DIR.iterdir()))
+
+    with open("index.json.orig", "w") as outfile:
+        json.dump(index, outfile, indent=4)
 
 
 if __name__ == "__main__":

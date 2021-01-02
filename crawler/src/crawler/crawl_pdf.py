@@ -6,7 +6,7 @@ Open PDF file contents into directories
 import logging
 
 from pathlib import Path
-from typing import BinaryIO, Dict, Generator, List, Text
+from typing import BinaryIO, DefaultDict, Dict, Generator, List, Text
 import pdfplumber
 import pandas as pd
 
@@ -54,7 +54,7 @@ class PdfCrawler:
 
 
 class DirCrawler(PdfCrawler):
-    def dir_to_index(self, dir_to_pdf_dir: Path) -> pd.DataFrame:
+    def dir_to_index(self, dir_to_pdf_dir: Path) -> DefaultDict[str, List]:
         """
         Args:
             dir_dir_pdf: like DIR in DIR/SUBDIR/EXAMPLE.pdf
@@ -62,20 +62,18 @@ class DirCrawler(PdfCrawler):
         Returns:
             pd.DataFrame of ['fname', 'syllabus_text']
         """
-        index = pd.DataFrame(columns=("course_id", "id", "syllabus_text"))
-        for pdf_dir in dir_to_pdf_dir.iterdir():
+        index = DefaultDict(list)
+        for course_id in dir_to_pdf_dir.iterdir():
             try:
-                syllabi = self.dir_to_pdf_contents(pdf_dir)
-                for course_id in syllabi:
-                    for i, syllabus in enumerate(syllabi[course_id]):
-                        index.loc[len(index)] = [course_id, i, syllabus]
+                syllabi = self.dir_to_pdf_contents(course_id)
+                index[course_id.name].extend(syllabi)
 
             except (ValueError, TypeError) as e:
                 _logger.info(e)
                 _logger.error(f"Processing failed for {dir_to_pdf_dir}")
         return index
 
-    def dir_to_pdf_contents(self, valid_pdf_dir: Path) -> Dict[str, str]:
+    def dir_to_pdf_contents(self, valid_pdf_dir: Path) -> List[str]:
         """
         Args:
             valid_pdf_dir: a checked directory
@@ -83,11 +81,7 @@ class DirCrawler(PdfCrawler):
         Returns:
             {'dir_name' : List[PDFContents]}
         """
-        return {
-            valid_pdf_dir.name: [
-                self.pdf_to_text(pdf) for pdf in valid_pdf_dir.iterdir()
-            ]
-        }
+        return [self.pdf_to_text(pdf) for pdf in valid_pdf_dir.iterdir()]
 
     def validate_dir(self, pdf_dir: Path) -> bool:
 

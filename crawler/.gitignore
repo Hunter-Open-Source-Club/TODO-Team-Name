@@ -47,6 +47,7 @@ docs/_build/*
 cover/*
 MANIFEST
 _fixtures/
+_test_fixtures/
 
 # Per-project virtualenvs
 .venv*/

@@ -6,7 +6,7 @@ Open PDF file contents into directories
 import logging
 
 from pathlib import Path
-from typing import BinaryIO, DefaultDict, Dict, Generator, List, Text
+from typing import DefaultDict, List, Text
 import pdfplumber
 import pandas as pd
 
@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 
 
 class PdfCrawler:
-    def pdf_to_pages(self, pdf_path: Path) -> List[str]:
+    def pdf_to_pages(self, pdf_path: Path) -> List[Text]:
         """
         Returns:
             -  text extracted from pdfs
@@ -38,7 +38,7 @@ class PdfCrawler:
 
         return extracted_pages
 
-    def pdf_to_text(self, pdf_path: Path) -> str:
+    def pdf_to_text(self, pdf_path: Path) -> Text:
         return "\n".join(self.pdf_to_pages(pdf_path)) or ""
 
     def validate_pdf(self, pdf_path: Path) -> bool:
@@ -58,9 +58,6 @@ class DirCrawler(PdfCrawler):
         """
         Args:
             dir_dir_pdf: like DIR in DIR/SUBDIR/EXAMPLE.pdf
-
-        Returns:
-            pd.DataFrame of ['fname', 'syllabus_text']
         """
         index = DefaultDict(list)
         for course_id in dir_to_pdf_dir.iterdir():

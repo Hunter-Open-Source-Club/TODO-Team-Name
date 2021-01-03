@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 from crawler.index_generator import IndexGenerator, SyllabusIndexEntry
 from pathlib import Path
 
@@ -18,6 +19,8 @@ def test_index_generator():
     attrs_in_record = {"course_id", "tags", "urls"}
     assert "course_id" in first
     assert set(first).issuperset(attrs_in_record)
+    with open("processed_index.json.orig", "w") as outfile:
+        json.dump(index, outfile, indent=4)
 
 
 def test_syllabus_index_entry():

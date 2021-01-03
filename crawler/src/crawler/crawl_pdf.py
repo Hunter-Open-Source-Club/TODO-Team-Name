@@ -8,8 +8,6 @@ import logging
 from pathlib import Path
 from typing import DefaultDict, List, Text
 import pdfplumber
-import pandas as pd
-
 
 __author__ = "Blake Vente"
 __copyright__ = "Blake Vente"

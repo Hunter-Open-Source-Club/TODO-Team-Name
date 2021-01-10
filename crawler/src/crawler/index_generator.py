@@ -15,6 +15,7 @@ from dataclasses import asdict, dataclass, field
 
 from rake_nltk.rake import Metric
 from nltk.tokenize import word_tokenize
+from nltk import corpus
 
 
 __author__ = "Blake Vente"
@@ -46,9 +47,12 @@ class SyllabusIndexEntry:
         self.syllabus = " ".join(word_tokenize(digit_less))
 
     def extract_tags(self):
+        stopwords = corpus.stopwords.words('english')
+        more_stopwords = ['csci', 'sexual', 'harassment', 'cheating', 'resources', 'see', 'edition', 'violence', 'please', 'call', 'thank you', 'honesty', 'visitors', 'pm', 'and', 'consent', 'services', 'topics', 'include', 'blackboard', 'including', 'religious', 'dishonesty', 'unfair', 'advantage', 'floor', 'or', 'must', 'offenses', 'strongly', 'suggest', 'week', 'special']
+        stopwords.extend(more_stopwords)
         # get rake-nltk keyword extractor
         tag_extractor = Rake(
-            stopwords="english",
+            stopwords=stopwords,
             max_length=2,
             ranking_metric=Metric.DEGREE_TO_FREQUENCY_RATIO,
         )

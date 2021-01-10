@@ -1,0 +1,5 @@
+# 
+data.ms
+meilisearch
+*.orig
+.DS_Store

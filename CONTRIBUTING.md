@@ -10,11 +10,11 @@ Requirements:
 - [Node.js](https://nodejs.org/en/) >= 12
 - [Yarn](https://classic.yarnpkg.com/en/docs/install/) >= 1.22
 
-Oneliner command to install packages for both: 
+Oneliner command to install packages for both from the main project folder: 
 
 `yarn --cwd api && yarn --cwd frontend`
 
-Alternatively install for a specifc folder by first running `cd api` or `cd frontend` then simply `yarn`.
+Alternatively install for a specific folder by first running `cd api` or `cd frontend` then simply `yarn`.
 
 ## Dev Scripts
 

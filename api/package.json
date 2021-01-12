@@ -1,0 +1,38 @@
+{
+  "name": "syllabase-api",
+  "description": "backend service for syllabase",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "format": "prettier --write \"./**/*.{ts,tsx}\"",
+    "clean": "rimraf dist",
+    "server": "ts-node app.ts",
+    "dev": "nodemon --exec ts-node -r tsconfig-paths/register index.ts",
+    "build": "tsc -p .",
+    "start": "node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.7",
+    "@types/morgan": "^1.9.2",
+    "@types/node": "^14.0.20",
+    "husky": "^5.0.6",
+    "lint-staged": "^10.5.1",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
+    "ts-node": "^8.10.2",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.4.1",
+    "morgan": "^1.10.0",
+    "rimraf": "^3.0.2",
+    "tsconfig-paths": "^3.9.0"
+  }
+}

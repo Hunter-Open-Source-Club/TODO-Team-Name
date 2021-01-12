@@ -4,6 +4,7 @@ Open PDF file contents into directories
 """
 
 import logging
+import hashlib
 
 from pathlib import Path
 import re
@@ -24,6 +25,13 @@ __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
 
+SYLLAB_STOPWORDS = [
+    "csci", "sexual", "harassment", "cheating", "resources", "see", "edition",
+    "violence", "please", "call", "thank you", "honesty", "visitors", "pm",
+    "and", "consent", "services", "topics", "include", "blackboard", "including",
+    "religious", "dishonesty", "unfair", "advantage", "floor", "or", "must",
+    "offenses", "strongly", "suggest", "week", "special",
+] 
 
 @dataclass
 class SyllabusIndexEntry:
@@ -31,6 +39,7 @@ class SyllabusIndexEntry:
     one record defining a syllabus
     implements method chaining
     """
+
     course_id: str = ""
     syllabus: Text = ""
     uuid: int = 0
@@ -38,30 +47,32 @@ class SyllabusIndexEntry:
     urls: List[Text] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        self.uuid = hash(self.syllabus)
+        self.uuid = hashlib.sha1(self.syllabus.encode('utf-8')).hexdigest()
 
+    def extract_tags(self):
         # remove urls, remove digits, tokenize words
         url_less = re.sub(r"http\S+", "", self.syllabus)
         remove_digits = str.maketrans("", "", digits)
         digit_less = url_less.translate(remove_digits)
-        self.syllabus = " ".join(word_tokenize(digit_less))
+        syllabus_tokenized = " ".join(word_tokenize(digit_less))
+        stopwords = corpus.stopwords.words("english")
+        stopwords.extend(SYLLAB_STOPWORDS)
 
-    def extract_tags(self):
-        stopwords = corpus.stopwords.words('english')
-        more_stopwords = ['csci', 'sexual', 'harassment', 'cheating', 'resources', 'see', 'edition', 'violence', 'please', 'call', 'thank you', 'honesty', 'visitors', 'pm', 'and', 'consent', 'services', 'topics', 'include', 'blackboard', 'including', 'religious', 'dishonesty', 'unfair', 'advantage', 'floor', 'or', 'must', 'offenses', 'strongly', 'suggest', 'week', 'special']
-        stopwords.extend(more_stopwords)
         # get rake-nltk keyword extractor
         tag_extractor = Rake(
             stopwords=stopwords,
             max_length=2,
             ranking_metric=Metric.DEGREE_TO_FREQUENCY_RATIO,
         )
-        tag_extractor.extract_keywords_from_text(self.syllabus)
+        tag_extractor.extract_keywords_from_text(syllabus_tokenized)
+        # TODO: Only add word tags if they are actually english words
+        #       and also pass through a denylist
         self.tags.extend(tag_extractor.get_ranked_phrases()[:20])
         return self
 
     def extract_urls(self):
-        self.urls.extend(re.findall(r"(https?://\S+)", self.syllabus))
+        newline_less = re.sub(r"\n", "", self.syllabus)
+        self.urls.extend(re.findall(r"(https?://\S+)", newline_less))
         return self
 
     def to_dict(self) -> Dict:

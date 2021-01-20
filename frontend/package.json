@@ -9,6 +9,8 @@
     "prettier": "^2.2.0"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -19,7 +21,7 @@
     "@types/react-router-dom": "^5.1.6",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
-    "firebase": "^8.0.2",
+    "mongoose": "^5.9.20",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",

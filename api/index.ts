@@ -2,6 +2,7 @@ import express from "express";
 import bodyparser from "body-parser";
 import logger from "morgan";
 import { port } from "config/keys";
+import connectToDatabase from "config/database";
 import { syllabi } from "routes";
 
 (async () => {
@@ -21,7 +22,7 @@ import { syllabi } from "routes";
         res: express.Response,
         next: express.NextFunction
       ) {
-        res.header("Access-Control-Allow-Origin", `http://localhost:3000`);
+        res.header("Access-Control-Allow-Origin", "http://localhost:3000");
         res.header(
           "Access-Control-Allow-Headers",
           "Origin, X-Requested-With, Content-Type, Accept"
@@ -29,6 +30,9 @@ import { syllabi } from "routes";
         next();
       });
     }
+
+    // Database
+    await connectToDatabase();
 
     // Routes
     app.get("/api", (req: express.Request, res: express.Response) => {
@@ -39,7 +43,7 @@ import { syllabi } from "routes";
 
     // Launch Server
     app.listen(port, () => {
-      console.log(`📡 Server up! 📡 Listening on  http://localhost:${port}`);
+      console.log(`📡 Server up! 📡 Listening on http://localhost:${port}`);
     });
   } catch (err) {
     console.error(err);

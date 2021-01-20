@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { Container, Typography, Button } from "@material-ui/core";
 
 const Home: React.FunctionComponent = () => {
   const [message, setMessage] = useState("Syllabased");
 
   return (
-    <div>
-      <p>Syllabase Home page</p>
-      <p> {message} </p>
-    </div>
+    <Container>
+      <Typography variant="h1">Syllabase Home page</Typography>
+      <Typography variant="h1"> {message} </Typography>
+    </Container>
   );
 };
 

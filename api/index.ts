@@ -2,7 +2,10 @@ import express from "express";
 import bodyparser from "body-parser";
 import logger from "morgan";
 import { port } from "config/keys";
+<<<<<<< HEAD
 import connectToDatabase from "config/database";
+=======
+>>>>>>> main
 import { syllabi } from "routes";
 
 (async () => {
@@ -22,7 +25,11 @@ import { syllabi } from "routes";
         res: express.Response,
         next: express.NextFunction
       ) {
+<<<<<<< HEAD
         res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+=======
+        res.header("Access-Control-Allow-Origin", `http://localhost:3000`);
+>>>>>>> main
         res.header(
           "Access-Control-Allow-Headers",
           "Origin, X-Requested-With, Content-Type, Accept"
@@ -31,9 +38,12 @@ import { syllabi } from "routes";
       });
     }
 
+<<<<<<< HEAD
     // Database
     await connectToDatabase();
 
+=======
+>>>>>>> main
     // Routes
     app.get("/api", (req: express.Request, res: express.Response) => {
       return res.send("Syllabase server. It's on the syllabus.");
@@ -43,7 +53,11 @@ import { syllabi } from "routes";
 
     // Launch Server
     app.listen(port, () => {
+<<<<<<< HEAD
       console.log(`📡 Server up! 📡 Listening on http://localhost:${port}`);
+=======
+      console.log(`📡 Server up! 📡 Listening on  http://localhost:${port}`);
+>>>>>>> main
     });
   } catch (err) {
     console.error(err);

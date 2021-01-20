@@ -7,7 +7,12 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const port: number = process.env.PORT ? +process.env.PORT : 8080;
+<<<<<<< HEAD
 const dbUrl: string =
   process.env.DB_URL || "mongodb://localhost:27017/syllabase";
 
 export { port, dbUrl };
+=======
+
+export { port };
+>>>>>>> main

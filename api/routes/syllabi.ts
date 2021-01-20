@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-import { db } from "../config/firebase";
->>>>>>> main
 import { Router, Request, Response } from "express";
 
 const router = Router();

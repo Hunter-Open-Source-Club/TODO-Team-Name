@@ -27,7 +27,14 @@ interface ListEntry {
   course_id: string;
   course_name: string;
 }
-
+const SyllabaseLogo = [
+  { c: "#4787ed", t: "Sy" },
+  { c: "#df523e", t: "ll" },
+  { c: "#f6bd3f", t: "a" },
+  { c: "#4787ed", t: "ba" },
+  { c: "#50a45c", t: "s" },
+  { c: "#df523e", t: "e" },
+];
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(10),
@@ -100,12 +107,9 @@ export default function Home() {
     <Container component="main" maxWidth="xs" className={classes.paper}>
       <Typography component="h1" variant="h3" className={classes.paper}>
         <span>
-          <span style={{ color: "#4787ed" }}>Sy</span>
-          <span style={{ color: "#df523e" }}>ll</span>
-          <span style={{ color: "#f6bd3f" }}>a</span>
-          <span style={{ color: "#4787ed" }}>b</span>
-          <span style={{ color: "#50a45c" }}>a</span>
-          <span style={{ color: "#df523e" }}>se</span>
+          {SyllabaseLogo.map(({ c, t }) => (
+            <span style={{ color: c }}>{t}</span>
+          ))}
         </span>
       </Typography>
       <Divider variant="fullWidth" color="white" className={classes.spaced} />

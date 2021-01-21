@@ -99,7 +99,14 @@ export default function Home() {
   return (
     <Container component="main" maxWidth="xs" className={classes.paper}>
       <Typography component="h1" variant="h3" className={classes.paper}>
-        Syllabase
+        <span>
+          <span style={{ color: "#4787ed" }}>Sy</span>
+          <span style={{ color: "#df523e" }}>ll</span>
+          <span style={{ color: "#f6bd3f" }}>a</span>
+          <span style={{ color: "#4787ed" }}>b</span>
+          <span style={{ color: "#50a45c" }}>a</span>
+          <span style={{ color: "#df523e" }}>se</span>
+        </span>
       </Typography>
       <Divider variant="fullWidth" color="white" className={classes.spaced} />
       {/* TODO: Animate from narrow width to full width */}
@@ -107,7 +114,7 @@ export default function Home() {
         fullWidth
         autoFocus
         id="standard-search"
-        label="Search syllabi..."
+        // label="Search syllabi..."
         type="search"
         variant="outlined"
         onChange={handleSearch}

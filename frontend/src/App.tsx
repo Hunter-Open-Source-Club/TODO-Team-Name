@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 
 const theme = createMuiTheme({
   shape: {
-    borderRadius: 20,
+    borderRadius: 30,
   },
   props: {
     MuiButtonBase: {

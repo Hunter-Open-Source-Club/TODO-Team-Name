@@ -1,8 +1,12 @@
 # Hunter Codefest 2020-2021
 
 # Team Info
-### Team name: 
-### Team members (format: GitHub username, last name, first name):
+### Team name: `TODO: TeamName`
+### Team members: 
+
+rvente, Vente, Blake
+boubascript Diallo, Boubacar
+xuejingao, Gao, Xuejin
 
 ### Group info (check all that apply - add an X in the [ ])
 - [ ] We are a Daedalus Google Mentorship group

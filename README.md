@@ -4,9 +4,9 @@
 ### Team name: `TODO: TeamName`
 ### Team members: 
 
-rvente, Vente, Blake
-boubascript Diallo, Boubacar
-xuejingao, Gao, Xuejin
+- @rvente, Vente, Blake
+- @boubascript Diallo, Boubacar
+- @xuejingao, Gao, Xuejin
 
 ### Group info (check all that apply - add an X in the [ ])
 - [ ] We are a Daedalus Google Mentorship group

@@ -1,31 +1,29 @@
-import React, { useState } from "react";
-import TextField from "@material-ui/core/TextField";
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Fuse from "fuse.js";
-import syllabi from "../../fixtures/syllabi";
 import {
+  AppBar,
   Divider,
+  Fade,
+  Grid,
+  IconButton,
+  Link,
   List,
   ListItem,
-  Link,
   ListItemText,
-  IconButton,
-  AppBar,
-  Fade,
-  Hidden,
-  Modal,
-  Card,
-  CardContent,
 } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
-import Backdrop from "@material-ui/core/Backdrop";
-import debounce from "lodash/debounce";
-import uniq from "lodash/uniq";
+import Fuse from "fuse.js";
+import { uniq } from "lodash";
+import React, { useState } from "react";
 import { Document, Page } from "react-pdf/dist/esm/entry.webpack";
+import syllabi from "../../fixtures/syllabi";
+import Dialog from "@material-ui/core/Dialog";
+import MuiDialogTitle from "@material-ui/core/DialogTitle";
+import CloseIcon from "@material-ui/icons/Close";
 
 interface ListEntry {
   visible: boolean;
@@ -49,8 +47,12 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(10),
     display: "flex",
-    flexDirection: "column",
+    flex: 1,
     alignItems: "center",
+    flexDirection: "column",
+  },
+  container: {
+    display: "flex",
   },
   modal: {
     display: "flex",
@@ -59,9 +61,16 @@ const useStyles = makeStyles((theme) => ({
   },
   modalContents: {
     backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+    height: "100vh",
+    width: "100vw",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+  closeButton: {
+    position: "absolute",
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
   },
   appBar: {
     top: "auto",
@@ -95,28 +104,41 @@ function PDFDocument({ url }: { url: string }) {
         file={url}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={console.error}
+        renderMode="svg"
       >
-        <Page pageNumber={pageNumber} />
+        <Page
+          pageNumber={pageNumber}
+          renderAnnotationLayer={false}
+          height={800}
+        />
       </Document>
       <p>
         Page {pageNumber} of {numPages}
       </p>
-      <Box onClick={() => setPageNumber((pageNumber || 0) + 1)}>{">"}</Box>
+      <Box
+        onClick={() =>
+          // wrap pages 1-indexed
+          setPageNumber(((pageNumber || 0) % (numPages || Infinity)) + 1)
+        }
+      >
+        {">"}
+      </Box>
     </div>
   );
 }
 
 function ModalInnerContents({ crs_id }: { crs_id: string }) {
+  const classes = useStyles();
   const txt = syllabi.find(({ course_id }) => course_id === crs_id);
   return (
     <Fade in={!!crs_id}>
-      <Card>
-        <CardContent>
+      <Grid container className={classes.modalContents} direction="row">
+        <Grid item xs={12} sm={6}>
           <Typography component="h5" variant="h5" color="textSecondary">
             {txt?.course_id}
           </Typography>
           <List>
-            {/* {uniq(txt?.urls).map((url, i) => (
+            {uniq(txt?.urls).map((url, i) => (
               <ListItem
                 button
                 divider
@@ -128,11 +150,13 @@ function ModalInnerContents({ crs_id }: { crs_id: string }) {
               >
                 <ListItemText primary={url.replace(/(.{250})..+/, "$1…")} />
               </ListItem>
-            ))} */}
+            ))}
           </List>
+        </Grid>
+        <Grid item xs={12} sm={6}>
           <PDFDocument url="http://syllabi.hunterosc.org/assets/courses/CS_127/CS127_ligorio_syllabus_s20.pdf" />
-        </CardContent>
-      </Card>
+        </Grid>
+      </Grid>
     </Fade>
   );
 }
@@ -245,20 +269,26 @@ export default function Home(): JSX.Element {
           </Fade>
         ))}
       </List>
-      <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
+      <Dialog
         className={classes.modal}
         open={!!active_course_id}
         onClose={handleClose}
+        onEscapeKeyDown={handleClose}
         closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
+        fullScreen
+        fullWidth
       >
+        <MuiDialogTitle disableTypography>
+          <IconButton
+            aria-label="close"
+            className={classes.closeButton}
+            onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        </MuiDialogTitle>
         <ModalInnerContents crs_id={active_course_id} />
-      </Modal>
+      </Dialog>
       <BottomBar />
     </Container>
   );

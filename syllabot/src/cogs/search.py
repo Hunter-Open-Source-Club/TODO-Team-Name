@@ -14,7 +14,6 @@ from discord import Embed
 from discord.ext import commands
 
 from src import searcher
-
 MEILI_INDEX = 'CS'
 SYLLABI_FILE = 'src/json/processed_index.json'
 COURSE_NAME_FILE = 'src/json/course_names.json'
@@ -25,7 +24,6 @@ with open(COURSE_NAME_FILE, 'r') as j:
 
 with open(COURSE_PROF_FILE, 'r') as j:
   prof_names = json.load(j)
-
 
 class Search(commands.Cog):
   def __init__(self, bot):
@@ -38,10 +36,9 @@ class Search(commands.Cog):
     self.course_names_dict = {}
     for key in course_names.keys():
       self.course_names_dict.update(course_names[key])
-
+      
     self.profs_names = prof_names
     
-
   @commands.command(name='avatar')
   async def ping(self, ctx, *, user: discord.Member = None):
     user = user or ctx.author
@@ -67,7 +64,7 @@ class Search(commands.Cog):
       course_name = '{} {}'.format(str(i + 1) + '.', self.course_names_dict[course_num])
 
       # String of professors teaching the class
-      prof_teaching = ', '.join(prof_names[course_num])
+      prof_teaching = ', '.join(self.profs_names[course_num])
       # Indentation purposes for the display
       course_num_val = course_num + '00' if len(course_num) == 6 else course_num
       course_description = course_num_val + ' | Professor(s): ' + prof_teaching

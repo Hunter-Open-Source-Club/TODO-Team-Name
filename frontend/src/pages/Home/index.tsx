@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Button,
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
@@ -16,6 +17,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import SearchIcon from "@material-ui/icons/Search";
+import ArrowRightAltIcon from "@material-ui/icons/ArrowRightAlt";
 import Fuse from "fuse.js";
 import { uniq } from "lodash";
 import React, { useState } from "react";
@@ -24,6 +26,7 @@ import syllabi from "../../fixtures/syllabi";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import CloseIcon from "@material-ui/icons/Close";
+import axios from "axios";
 
 interface ListEntry {
   visible: boolean;
@@ -82,10 +85,13 @@ const useStyles = makeStyles((theme) => ({
   spaced: {
     margin: theme.spacing(3),
   },
+  link: {
+    color: "blue",
+  },
 }));
 
 const fuse = new Fuse(syllabi, {
-  keys: ["course_id", "syllabus"],
+  keys: ["course_id", "syllabus", "course_name"],
   shouldSort: true,
   findAllMatches: true,
   isCaseSensitive: false,
@@ -99,43 +105,60 @@ function PDFDocument({ url }: { url: string }) {
     setNumPages(numPages);
   }
   return (
-    <div>
-      <Document
-        file={url}
-        onLoadSuccess={onDocumentLoadSuccess}
-        onLoadError={console.error}
-        renderMode="svg"
-      >
-        <Page
-          pageNumber={pageNumber}
-          renderAnnotationLayer={false}
-          height={800}
-        />
-      </Document>
-      <p>
-        Page {pageNumber} of {numPages}
-      </p>
-      <Box
-        onClick={() =>
-          // wrap pages 1-indexed
-          setPageNumber(((pageNumber || 0) % (numPages || Infinity)) + 1)
-        }
-      >
-        {">"}
-      </Box>
-    </div>
+    <Container>
+      <Grid container justify="center">
+        <Grid item xs={12} alignItems="center">
+          <Typography variant="body1">
+            Page {pageNumber} of {numPages}
+          </Typography>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              // wrap pages 1-indexed
+              setPageNumber(((pageNumber || 0) % (numPages || Infinity)) + 1);
+            }}
+          >
+            <ArrowRightAltIcon />
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Document
+            file={url}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={console.error}
+            renderMode="svg"
+          >
+            <Page
+              pageNumber={pageNumber}
+              renderAnnotationLayer={false}
+              height={800}
+            />
+          </Document>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
-function ModalInnerContents({ crs_id }: { crs_id: string }) {
+function ModalInnerContents({
+  crs_id,
+  path,
+}: {
+  crs_id: string;
+  path: string;
+}) {
   const classes = useStyles();
   const txt = syllabi.find(({ course_id }) => course_id === crs_id);
+
   return (
     <Fade in={!!crs_id}>
       <Grid container className={classes.modalContents} direction="row">
         <Grid item xs={12} sm={6}>
           <Typography component="h5" variant="h5" color="textSecondary">
             {txt?.course_id}
+          </Typography>
+          <Typography component="h6" variant="h6" className={classes.paper}>
+            Links In This Syllabus:
           </Typography>
           <List>
             {uniq(txt?.urls).map((url, i) => (
@@ -147,14 +170,17 @@ function ModalInnerContents({ crs_id }: { crs_id: string }) {
                 component="a"
                 target="_blank"
                 rel="noopener noreferrer"
+                className={classes.link}
               >
-                <ListItemText primary={url.replace(/(.{250})..+/, "$1…")} />
+                <ListItemText primary={url.replace(/(.{250})..+/, "$1…")}>
+                  {" "}
+                </ListItemText>
               </ListItem>
             ))}
           </List>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <PDFDocument url="http://syllabi.hunterosc.org/assets/courses/CS_127/CS127_ligorio_syllabus_s20.pdf" />
+          <PDFDocument url={`http://syllabi.hunterosc.org/${path}`} />
         </Grid>
       </Grid>
     </Fade>
@@ -180,7 +206,7 @@ function BottomBar() {
 }
 
 const DefaultSelectedCourse = {
-  visible: true,
+  visible: false,
   course_id: "CS_127",
   course_name: "Intro to Computer Science",
 };
@@ -189,9 +215,15 @@ export default function Home(): JSX.Element {
   const classes = useStyles();
   const [results, setResults] = useState([DefaultSelectedCourse]);
   const [query, updateQuery] = useState("");
-  const [active_course_id, setOpen] = React.useState("");
+  const [active_course_id, setOpen] = useState("");
+  const [activeCoursePath, setActiveCoursePath] = useState("");
 
-  const handleOpen = (course_id: string) => {
+  const handleOpen = async (course_id: string) => {
+    const files: any = await axios.get(
+      `https://api.github.com/repos/RichAguil/HunterCS_CourseSyllabi/contents/assets/courses/${course_id}`
+    );
+    console.log(files);
+    setActiveCoursePath(files.data[0].path);
     setOpen(course_id);
   };
 
@@ -212,10 +244,10 @@ export default function Home(): JSX.Element {
     const res = fuse.search(currentTarget.value);
     setTimeout(() => {
       setResults(
-        res.map(({ item: { course_id, syllabus } }) => ({
+        res.map(({ item: { course_id, course_name, syllabus } }) => ({
           course_id: course_id,
           visible: true,
-          course_name: syllabus.substring(0, 10),
+          course_name: course_name ? course_name : syllabus.substring(0, 10),
         }))
       );
     }, 500);
@@ -287,7 +319,7 @@ export default function Home(): JSX.Element {
             <CloseIcon />
           </IconButton>
         </MuiDialogTitle>
-        <ModalInnerContents crs_id={active_course_id} />
+        <ModalInnerContents crs_id={active_course_id} path={activeCoursePath} />
       </Dialog>
       <BottomBar />
     </Container>

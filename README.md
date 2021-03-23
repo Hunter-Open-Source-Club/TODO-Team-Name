@@ -10,3 +10,8 @@ Check out our issues and out project board.
 - [@boubascript](https://github.com/boubascript)
 - [@xuejingao](https://github.com/xuejingao), Gao, Xuejin
 
+[Search Page](img/search_page.png)
+
+[Results Page](img/result_page.png)
+
+[Syllabot](img/syllabot.png)

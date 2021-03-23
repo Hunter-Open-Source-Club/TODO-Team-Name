@@ -6,8 +6,7 @@ Check out our issues and out project board.
 
 ### Contributors: 
 
-- @rvente, Vente, Blake
-- @boubascript Diallo, Boubacar
-- @xuejingao, Gao, Xuejin
-
+- [@rvente](https://github.com/rvente), Vente, Blake
+- [@boubascript](https://github.com/boubascript)
+- [@xuejingao](https://github.com/xuejingao), Gao, Xuejin
 
